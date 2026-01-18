@@ -19,7 +19,7 @@ namespace TaskApi.Controllers
         [HttpGet("Health", Name = "Health")]
         public IActionResult Health()
         {
-            return Ok(new { message = "Servicio online" });
+            return Ok(new { message = "Service is online" });
         }
 
         [ApiKeyValidation]
@@ -33,7 +33,7 @@ namespace TaskApi.Controllers
             }
             catch
             {
-                return StatusCode(500, new { ok = false, message = "Error al procesar la solicitud" });
+                return StatusCode(500, new { ok = false, message = "Error processing request" });
             }
         }
 
@@ -48,7 +48,7 @@ namespace TaskApi.Controllers
             }
             catch
             {
-                return StatusCode(500, new { ok = false, message = "Error al procesar la solicitud" });
+                return StatusCode(500, new { ok = false, message = "Error processing request" });
             }
         }
 
@@ -64,7 +64,7 @@ namespace TaskApi.Controllers
             }
             catch
             {
-                return StatusCode(500, new { ok = false, message = "Error al procesar la solicitud" });
+                return StatusCode(500, new { ok = false, message = "Error processing request" });
             }
         }
 
@@ -80,7 +80,7 @@ namespace TaskApi.Controllers
             }
             catch
             {
-                return StatusCode(500, new { ok = false, message = "Error al procesar la solicitud" });
+                return StatusCode(500, new { ok = false, message = "Error processing request" });
             }
         }
         [ApiKeyValidation]
@@ -95,7 +95,7 @@ namespace TaskApi.Controllers
             }
             catch
             {
-                return StatusCode(500, new { ok = false, message = "Error al procesar la solicitud" });
+                return StatusCode(500, new { ok = false, message = "Error processing request" });
             }
         }
     }

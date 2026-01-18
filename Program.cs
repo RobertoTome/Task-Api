@@ -50,4 +50,4 @@ app.MapHub<TaskHub>("/taskHub");
 
 app.Run();
 
-//iniciar con           ngrok http 5211
+//for public domain start with ngrok http 5211

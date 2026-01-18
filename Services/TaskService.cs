@@ -67,8 +67,7 @@ namespace TaskApi.Services
                 {
                     Event = "TaskUpdated",
                     TaskId = task.Id,
-                    Task = task
-                    //Status = 0.ToString()
+                    Task = task,
                 });
             }
             return task;

@@ -4,9 +4,6 @@ namespace TaskApi.Hubs
 {
     public class TaskHub : Hub
     {
-        // Este hub está vacío porque usaremos IHubContext desde el servicio
-        // Opcionalmente puedes agregar métodos que los clientes puedan invocar
-
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
