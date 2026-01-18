@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using TestApi;
-using TestApi.Hubs;
-using TestApi.Services;
+using TaskApi;
+using TaskApi.Hubs;
+using TaskApi.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -18,7 +18,7 @@ builder.Services.AddControllers()
             new JsonStringEnumConverter());
     });
 
-builder.Services.AddScoped<ITestService, TestService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -41,7 +41,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

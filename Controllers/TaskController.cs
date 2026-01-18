@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestApi.Filters;
-using TestApi.Requests;
-using TestApi.Services;
+using TaskApi.Filters;
+using TaskApi.Requests;
+using TaskApi.Services;
 
-namespace TestApi.Controllers
+namespace TaskApi.Controllers
 {
     [ApiController]
     [Route("/tasks/")]
-    public class TestController : ControllerBase
+    public class TaskController : ControllerBase
     {
-        private readonly ITestService _testService;
+        private readonly ITaskService _taskService;
 
-        public TestController(ITestService testService)
+        public TaskController(ITaskService taskService)
         {
-            _testService = testService;
+            _taskService = taskService;
         }
 
         [HttpGet("Health", Name = "Health")]
@@ -28,7 +28,7 @@ namespace TestApi.Controllers
         {
             try
             {
-                Models.TaskItem result = await _testService.Create(request);
+                Models.TaskItem result = await _taskService.Create(request);
                 return Ok(result);
             }
             catch
@@ -43,7 +43,7 @@ namespace TestApi.Controllers
         {
             try
             {
-                List<Models.TaskItem> result = await _testService.GetList();
+                List<Models.TaskItem> result = await _taskService.GetList();
                 return Ok(result);
             }
             catch
@@ -58,7 +58,7 @@ namespace TestApi.Controllers
         {
             try
             {
-                Models.TaskItem? result = await _testService.GetById(id);
+                Models.TaskItem? result = await _taskService.GetById(id);
                 if (result == null) return NotFound("Not Found");
                 return Ok(result);
             }
@@ -74,7 +74,7 @@ namespace TestApi.Controllers
         {
             try
             {
-                Models.TaskItem? result = await _testService.Update(id, request);
+                Models.TaskItem? result = await _taskService.Update(id, request);
                 if (result == null) return NotFound();
                 return Ok(result);
             }
@@ -89,7 +89,7 @@ namespace TestApi.Controllers
         {
             try
             {
-                bool result = await _testService.Delete(id);
+                bool result = await _taskService.Delete(id);
                 if (!result) return NotFound();
                 return NoContent();
             }

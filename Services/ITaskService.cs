@@ -1,9 +1,9 @@
-﻿using TestApi.Models;
-using TestApi.Requests;
+﻿using TaskApi.Models;
+using TaskApi.Requests;
 
-namespace TestApi.Services
+namespace TaskApi.Services
 {
-    public interface ITestService
+    public interface ITaskService
     {
         Task<TaskItem> Create(CreateRequest r);
         Task<List<TaskItem>> GetList();

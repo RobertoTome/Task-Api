@@ -1,7 +1,6 @@
-﻿using TestApi.Models;
-using TaskStatus = TestApi.Models.TkStatus;
+﻿using TaskStatus = TaskApi.Models.TkStatus;
 
-namespace TestApi.Requests
+namespace TaskApi.Requests
 {
     public class UpdateRequest
     {

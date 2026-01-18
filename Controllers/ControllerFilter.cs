@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace TestApi.Filters
+namespace TaskApi.Filters
 {
     public class ApiKeyValidationAttribute : ActionFilterAttribute
     {

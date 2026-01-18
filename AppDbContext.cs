@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using TestApi.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskApi.Models;
 
-namespace TestApi
+namespace TaskApi
 {
     public class AppDbContext : DbContext
     {

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace TestApi.Migrations
+namespace TaskApi.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

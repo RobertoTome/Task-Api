@@ -1,6 +1,6 @@
-﻿using TestApi.Models;
+﻿using TaskApi.Models;
 
-namespace TestApi.DTOs
+namespace TaskApi.DTOs
 {
     public class TaskEventDto
     {

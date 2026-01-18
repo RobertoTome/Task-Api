@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using TestApi.DTOs;
-using TestApi.Hubs;
-using TestApi.Models;
-using TestApi.Requests;
+using TaskApi.DTOs;
+using TaskApi.Hubs;
+using TaskApi.Models;
+using TaskApi.Requests;
 
-namespace TestApi.Services
+namespace TaskApi.Services
 {
-    public class TestService : ITestService
+    public class TaskService : ITaskService
     {
         private readonly AppDbContext _context;
         private readonly IHubContext<TaskHub> _hubContext;
 
-        public TestService(AppDbContext context, IHubContext<TaskHub> hubContext)
+        public TaskService(AppDbContext context, IHubContext<TaskHub> hubContext)
         {
             _context = context;
             _hubContext = hubContext;
@@ -54,7 +54,7 @@ namespace TestApi.Services
 
         public async Task<TaskItem?> Update(int id, UpdateRequest request)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            TaskItem? task = await _context.Tasks.FindAsync(id);
             if (task != null)
             {
                 task.Message = request.Message;
@@ -76,7 +76,7 @@ namespace TestApi.Services
 
         public async Task<bool> Delete(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            TaskItem? task = await _context.Tasks.FindAsync(id);
             if (task != null)
             {
                 _context.Tasks.Remove(task);

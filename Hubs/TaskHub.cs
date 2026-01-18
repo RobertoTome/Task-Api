@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace TestApi.Hubs
+namespace TaskApi.Hubs
 {
     public class TaskHub : Hub
     {

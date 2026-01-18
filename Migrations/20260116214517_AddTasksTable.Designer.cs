@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TestApi;
+using TaskApi;
 
 #nullable disable
 
-namespace TestApi.Migrations
+namespace TaskApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20260116214517_AddTasksTable")]
@@ -20,7 +20,7 @@ namespace TestApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
 
-            modelBuilder.Entity("TestApi.Models.TaskItem", b =>
+            modelBuilder.Entity("TaskApi.Models.TaskItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

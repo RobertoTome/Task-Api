@@ -1,6 +1,6 @@
-﻿using TestApi.Models;
+﻿using TaskApi.Models;
 
-namespace TestApi.Requests
+namespace TaskApi.Requests
 {
     public class CreateRequest
     {
