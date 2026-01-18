@@ -1,0 +1,504 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Real-Time Notifications</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+            .header h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            }
+
+            .header p {
+                font-size: 1.1em;
+                opacity: 0.9;
+            }
+
+        #connection-status {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 1em;
+        }
+
+        .status-connecting {
+            background: #ffc107;
+            color: #000;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-connected {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-disconnected {
+            background: #dc3545;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Stats Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+            }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+            .stat-number.created {
+                color: #28a745;
+            }
+
+            .stat-number.updated {
+                color: #ffc107;
+            }
+
+            .stat-number.deleted {
+                color: #dc3545;
+            }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        /* Notifications Panel */
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .panel h2 {
+            color: #667eea;
+            font-size: 1.8em;
+        }
+
+        .btn-clear {
+            padding: 8px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+            .btn-clear:hover {
+                background: #c82333;
+                transform: translateY(-2px);
+            }
+
+        /* Notifications */
+        .notifications {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+            .notifications::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .notifications::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            .notifications::-webkit-scrollbar-thumb {
+                background: #667eea;
+                border-radius: 10px;
+            }
+
+        .notification {
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            animation: slideIn 0.4s ease-out;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification-created {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left-color: #28a745;
+        }
+
+        .notification-updated {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+            border-left-color: #ffc107;
+        }
+
+        .notification-deleted {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left-color: #dc3545;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+
+        .notification-created .notification-title {
+            color: #155724;
+        }
+
+        .notification-updated .notification-title {
+            color: #856404;
+        }
+
+        .notification-deleted .notification-title {
+            color: #721c24;
+        }
+
+        .notification-time {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .notification-body {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .notification-message {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .notification-data {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #495057;
+            background: rgba(0,0,0,0.05);
+            padding: 8px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔔 SignalR Real-Time Monitor</h1>
+            <p>Live Task Notifications</p>
+            <div id="connection-status" class="status-connecting">
+                ⏳ Connecting...
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number created" id="count-created">0</div>
+                <div class="stat-label">✅ Tasks Created</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number updated" id="count-updated">0</div>
+                <div class="stat-label">🔄 Tasks Updated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number deleted" id="count-deleted">0</div>
+                <div class="stat-label">❌ Tasks Deleted</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2>📋 Live Notifications</h2>
+                <button class="btn-clear" onclick="clearNotifications()">
+                    🗑️ Clear All
+                </button>
+            </div>
+
+            <div class="notifications" id="notifications">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>Waiting for events...</h3>
+                    <p>Notifications will appear here when tasks are created, updated, or deleted</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5211';
+        let connection;
+        let countCreated = 0;
+        let countUpdated = 0;
+        let countDeleted = 0;
+
+        // Initialize SignalR connection
+        function initSignalR() {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl(`${API_URL}/taskHub`)
+                .withAutomaticReconnect()
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+
+            // Event: Task Created
+            connection.on("TaskCreated", (data) => {
+                console.log("✅ TaskCreated:", data);
+                countCreated++;
+                updateStats();
+                addNotification('created', 'Task Created', data);
+            });
+
+            // Event: Task Updated
+            connection.on("TaskUpdated", (data) => {
+                console.log("🔄 TaskUpdated:", data);
+                countUpdated++;
+                updateStats();
+                addNotification('updated', 'Task Updated', data);
+            });
+
+            // Event: Task Deleted
+            connection.on("TaskDeleted", (data) => {
+                console.log("❌ TaskDeleted:", data);
+                countDeleted++;
+                updateStats();
+                addNotification('deleted', 'Task Deleted', data);
+            });
+
+            // Start connection
+            connection.start()
+                .then(() => {
+                    updateConnectionStatus('connected');
+                    console.log("✅ Connected to SignalR Hub");
+                })
+                .catch(err => {
+                    console.error("❌ Connection error:", err);
+                    updateConnectionStatus('disconnected');
+                });
+
+            // Handle reconnection events
+            connection.onreconnecting(() => {
+                updateConnectionStatus('connecting');
+                console.log("⏳ Reconnecting...");
+            });
+
+            connection.onreconnected(() => {
+                updateConnectionStatus('connected');
+                console.log("✅ Reconnected");
+            });
+
+            connection.onclose(() => {
+                updateConnectionStatus('disconnected');
+                console.log("❌ Connection closed");
+            });
+        }
+
+        // Update connection status indicator
+        function updateConnectionStatus(status) {
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.className = `status-${status}`;
+
+            const statusTexts = {
+                connecting: '⏳ Connecting...',
+                connected: '✅ Connected',
+                disconnected: '❌ Disconnected'
+            };
+
+            statusDiv.textContent = statusTexts[status];
+        }
+
+        // Update statistics counters
+        function updateStats() {
+            document.getElementById('count-created').textContent = countCreated;
+            document.getElementById('count-updated').textContent = countUpdated;
+            document.getElementById('count-deleted').textContent = countDeleted;
+        }
+
+        // Add notification to the panel
+        function addNotification(type, title, data) {
+            const notificationsDiv = document.getElementById('notifications');
+
+            // Remove empty state if exists
+            const emptyState = notificationsDiv.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+
+            const icon = {
+                'created': '✅',
+                'updated': '🔄',
+                'deleted': '❌'
+            }[type];
+
+            const time = new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            // Format notification content
+            let message = '';
+            if (type === 'created' && data.task) {
+                message = `New task: <strong>${data.task.title}</strong>`;
+            } else if (type === 'updated') {
+                message = `Task ID <strong>${data.taskId}</strong> status changed to <strong>${data.status || 'updated'}</strong>`;
+            } else if (type === 'deleted') {
+                message = `Task ID <strong>${data.taskId}</strong> has been removed`;
+            }
+
+            notification.innerHTML = `
+                    <div class="notification-header">
+                        <div class="notification-title">${icon} ${title}</div>
+                        <div class="notification-time">${time}</div>
+                    </div>
+                    <div class="notification-body">
+                        <div class="notification-message">${message}</div>
+                        <div class="notification-data">${JSON.stringify(data, null, 2)}</div>
+                    </div>
+                `;
+
+            // Insert at the beginning
+            notificationsDiv.insertBefore(notification, notificationsDiv.firstChild);
+
+            // Limit to 50 notifications
+            while (notificationsDiv.children.length > 50) {
+                notificationsDiv.removeChild(notificationsDiv.lastChild);
+            }
+        }
+
+        // Clear all notifications
+        function clearNotifications() {
+            const notificationsDiv = document.getElementById('notifications');
+            notificationsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>Waiting for events...</h3>
+                        <p>Notifications will appear here when tasks are created, updated, or deleted</p>
+                    </div>
+                `;
+
+            // Reset counters
+            countCreated = 0;
+            countUpdated = 0;
+            countDeleted = 0;
+            updateStats();
+
+            console.log("🗑️ Notifications cleared");
+        }
+
+        // Initialize application
+        console.log("🚀 Initializing SignalR Real-Time Monitor...");
+        initSignalR();
+    </script>
+</body>
+</html>
